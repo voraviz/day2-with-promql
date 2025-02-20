@@ -73,6 +73,10 @@ backend-67cd46855d-8tqkl   1/1     Running   0          6m46s
 backend-67cd46855d-q8fgv   0/1     Running   0          7m16s
 ```
 
+Check in Developer console
+
+![](images/dev_console_show_pod.png)
+
 ### PromQL for check pod status
 
 - Open Developer Console and select namespace *demo*, navigate to *Observe* then select *Metrics*
@@ -200,7 +204,7 @@ backend-67cd46855d-q8fgv   0/1     Running   0          7m16s
   ```  
 
   Result
-  
+
   ![](images/endpoint_not_ready.png)
 <!-- - PromQL for check Livenss probe failed
 
