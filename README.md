@@ -1,5 +1,14 @@
 # PromQL for Day 2
 
+- [PromQL for Day 2](#promql-for-day-2)
+  - [Liveness and Readiness](#liveness-and-readiness)
+    - [Sample Application](#sample-application)
+    - [PromQL for check pod status](#promql-for-check-pod-status)
+    - [PromQL for check pod status by probe type](#promql-for-check-pod-status-by-probe-type)
+      - [Readiness Probe](#readiness-probe)
+      - [Liveness Probe](#liveness-probe)
+    - [PromQL for check number of endpoint in service](#promql-for-check-number-of-endpoint-in-service)
+
 ## Liveness and Readiness
 
 ### Sample Application
@@ -166,7 +175,33 @@ backend-67cd46855d-q8fgv   0/1     Running   0          7m16s
 
   ![](images/promql_pod_by_exit_code.png)
 
+### PromQL for check number of endpoint in service
+- Number for avilable endpoint by service
+  
+  ```bash
+  kube_endpoint_address_available
+  ```
 
+  Set pod in previous step to be ready again
+
+  ```bash
+  oc exec $NOT_READY_POD -- curl -v http://localhost:8080/ready
+  oc exec $NOT_READY_POD -- curl -s http://localhost:8080/q/health/ready
+  ```
+
+  Result
+
+  ![](images/endpoint_avilable.png)
+
+- Number of not ready endpoint in service
+
+  ```bash
+  kube_endpoint_address_not_ready{namespace="demo",endpoint="backend"}
+  ```  
+
+  Result
+  
+  ![](images/endpoint_not_ready.png)
 <!-- - PromQL for check Livenss probe failed
 
 ```
@@ -188,3 +223,4 @@ kube_pod_container_status_last_terminated_reason{namespace="test",reason="OOMKil
 kube_pod_container_status_last_terminated_exitcode{namespace="test",exit_code="137"}
 ```
 ## Memory Leak -->
+
