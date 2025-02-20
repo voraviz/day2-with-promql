@@ -202,10 +202,11 @@ Check in Developer console
   ```bash
   kube_endpoint_address_not_ready{namespace="demo",endpoint="backend"}
   ```  
+  
 
-  Result
+  Result of another pod also config to not ready
 
-  ![](images/endpoint_not_ready.png)
+  ![](images/endpoint_not_ready.png)  
 <!-- - PromQL for check Livenss probe failed
 
 ```
