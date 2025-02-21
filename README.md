@@ -1,17 +1,17 @@
-# PromQL for Day 2
+# Day 2 with PromQL
 
-- [PromQL for Day 2](#promql-for-day-2)
-  - [Liveness and Readiness](#liveness-and-readiness)
-    - [Sample Application](#sample-application)
-    - [PromQL for check pod status](#promql-for-check-pod-status)
-    - [PromQL for check pod status by probe type](#promql-for-check-pod-status-by-probe-type)
+- [Day 2 with PromQL](#day-2-with-promql)
+  - [Sample Application](#sample-application)
+  - [Pod Status](#pod-status)
+    - [Is pod ready?](#is-pod-ready)
+    - [Query by type of probe](#query-by-type-of-probe)
       - [Readiness Probe](#readiness-probe)
       - [Liveness Probe](#liveness-probe)
-    - [PromQL for check number of endpoint in service](#promql-for-check-number-of-endpoint-in-service)
+  - [Number of endpoints in service](#number-of-endpoints-in-service)
 
-## Liveness and Readiness
 
-### Sample Application
+## Sample Application
+
 - Deploy sample app in namespace demo
 ```bash
 oc new-project demo --display-name "Demo Project"
@@ -46,8 +46,11 @@ Press Ctrl-C to exit
 - Force 1 backend pod to be not ready state
 
 ```bash
+# Custom column to show only name and not show header then descending sort and filter only first one
 NOT_READY_POD=$(oc get po -o custom-columns='Name:.metadata.name' --no-headers=true | sort -r | head -n 1)
+# /not_ready will set backend app to return readiness probe with down
 oc exec $NOT_READY_POD -- curl -v http://localhost:8080/not_ready
+# Verify readiness probe
 oc exec $NOT_READY_POD -- curl -s http://localhost:8080/q/health/ready
 ```
 Output
@@ -77,7 +80,9 @@ Check in Developer console
 
 ![](images/dev_console_show_pod.png)
 
-### PromQL for check pod status
+## Pod Status
+
+### Is pod ready?
 
 - Open Developer Console and select namespace *demo*, navigate to *Observe* then select *Metrics*
 - PromQL for check pod status in namespace *demo* and container name is *backend*
@@ -90,7 +95,7 @@ Check in Developer console
 
   ![](images/promql_pod_container_ready.png)
 
-  Filter for specific pod
+  Filter with namespace and pod
 
   ```bash
   kube_pod_container_status_ready{namespace="demo",pod="backend-67cd46855d-q8fgv"}
@@ -109,14 +114,15 @@ Check in Developer console
  
   Result
 
-  Time format is [epoch timestamp](https://www.epochconverter.com/). 
+  *Time format is [epoch timestamp]*(https://www.epochconverter.com/). 
  
   ![](images/promql_pod_container_ready_specific_pod_with_time.png)
   
 
 
-### PromQL for check pod status by probe type
+### Query by type of probe
 #### Readiness Probe
+
 - PromQL for check Readiness probe failed
 
   ```bash
@@ -128,6 +134,7 @@ Check in Developer console
   ![](images/promql_pod_container_by_probe_type_readiness.png)
 
 #### Liveness Probe
+
 - Force 1 backend pod to be response with fail liveness
 
   ```bash
@@ -179,7 +186,8 @@ Check in Developer console
 
   ![](images/promql_pod_by_exit_code.png)
 
-### PromQL for check number of endpoint in service
+## Number of endpoints in service
+
 - Number for avilable endpoint by service
   
   ```bash
@@ -208,7 +216,6 @@ Check in Developer console
 
   ![](images/endpoint_not_ready.png)  
 <!-- - PromQL for check Livenss probe failed
-
 ```
 kube_pod_container_status_ready{pod="backend-6bdc895897-59qk7",namespace="test"}
 prober_probe_total{namespace="test",probe_type="Liveness", result != "successful"}
